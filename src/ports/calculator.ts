@@ -1,8 +1,8 @@
-import { api } from "@manwaring/lambda-wrapper";
+import { api, wrapper } from "@manwaring/lambda-wrapper";
 import { ITwoDigits } from "../types/calculator";
 import { addTwoDigits, divideTwoDigits } from "../businessLogic/calculator";
 
-const add = api<ITwoDigits>(async ({ body, success, error }) => {
+const add2 = api<ITwoDigits>(async ({ body, success, error }) => {
   try {
     const { number1, number2 } = body;
     const result = addTwoDigits(number1, number2);
@@ -11,6 +11,14 @@ const add = api<ITwoDigits>(async ({ body, success, error }) => {
     return error({ body: err.message });
   }
 });
+
+const add = wrapper(async ({ event, success, error }) => {
+  const { Records } = event;
+  console.log("TRIGGERED");
+  console.log("event.Records", Records.length);
+  return success();
+});
+
 const divide = api<ITwoDigits>(async ({ body, success, error }) => {
   try {
     const { number1, number2 } = body;

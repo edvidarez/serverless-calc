@@ -6,8 +6,8 @@
   "scripts": {
     "start": "serverless offline --allowCache",
     "dev": "serverless offline --allowCache",
-    "deploy:dev":"serverless deploy -s development",
-    "deploy:prod":"serverless deploy -s production",
+    "deploy:dev": "serverless deploy -s development",
+    "deploy:prod": "serverless deploy -s production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -22,6 +22,8 @@
     "typescript": "^4.1.2"
   },
   "dependencies": {
-    "@manwaring/lambda-wrapper": "^4.4.1"
+    "@manwaring/lambda-wrapper": "^4.4.1",
+    "serverless": "^2.20.1",
+    "serverless-offline-sqs": "^4.1.1"
   }
 }

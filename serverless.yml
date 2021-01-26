@@ -1,18 +1,45 @@
 service: serverless-calc
+useDotenv: true
 
 provider:
   name: aws
   stage: development
+  region: us-west-1
   runtime: nodejs12.x
+  apiGateway:
+    shouldStartNameWithService: true
+
+custom:
+  serverless-offline-sqs:
+    autoCreate: true # create queue if not exists
+    apiVersion: "2012-11-05"
+    endpoint: http://localhost:9324
+    region: us-west-1
+    accessKeyId: root
+    secretAccessKey: root
+    skipCacheInvalidation: false
 
 plugins:
-  - serverless-offline
   - serverless-plugin-typescript
+  - serverless-offline-sqs
+  - serverless-offline
 
 functions:
+  commands:
+    handler: src/ports/slack.commandHandler
+    events:
+      - http:
+          path: /slack/{command}
+          method: post
   add:
     handler: src/ports/calculator.add
+    reservedConcurrency: 10 #Concurrency control
     events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - MyCalcCommandsQueue
+              - Arn
       - http:
           path: /add
           method: post
@@ -23,3 +50,10 @@ functions:
       - http:
           path: /divide
           method: post
+
+resources:
+  Resources:
+    MyCalcCommandsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: MyCalcCommandsQueue
